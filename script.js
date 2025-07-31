@@ -21,8 +21,51 @@ openFeatures();
 let form = document.querySelector(".add-task form");
 let taskInput = document.querySelector(".add-task form input");
 let taskDetailsInput = document.querySelector(".add-task form textarea");
+let taskCheckbox = document.querySelector(".add-task form #check");
+
+let currentTask = [
+  {
+    task: "Mandir Jao",
+    details: "Hanuman ji wale",
+    imp: true,
+  },
+  {
+    task: "Recording karo",
+    details: "Cohort ke liye",
+    imp: true,
+  },
+  {
+    task: "Lunch",
+    details: "Diet",
+    imp: false,
+  },
+];
+
+function renderTask() {
+  var allTask = document.querySelector(".all-task");
+
+  var sum = "";
+
+  currentTask.forEach(function (elem) {
+    sum += `<div class="task">
+              <h5>${elem.task} <span class=${elem.imp}>imp</span> </h5>
+              <button>Mark as completed</button>
+            </div>`;
+    allTask.innerHTML = sum;
+  });
+}
+
+renderTask();
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-  console.log(taskInput.value, taskDetailsInput.value);
+  currentTask.push({
+    task: taskInput.value,
+    details: taskDetailsInput.value,
+    imp: taskCheckbox.checked,
+  });
+  taskInput.value = "";
+  taskDetailsInput.value = "";
+  taskCheckbox.checked = false;
+  renderTask();
 });
