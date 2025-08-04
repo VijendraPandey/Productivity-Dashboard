@@ -18,54 +18,110 @@ function openFeatures() {
 
 openFeatures();
 
-let form = document.querySelector(".add-task form");
-let taskInput = document.querySelector(".add-task form input");
-let taskDetailsInput = document.querySelector(".add-task form textarea");
-let taskCheckbox = document.querySelector(".add-task form #check");
+function todoList() {
+  let form = document.querySelector(".add-task form");
+  let taskInput = document.querySelector(".add-task form input");
+  let taskDetailsInput = document.querySelector(".add-task form textarea");
+  let taskCheckbox = document.querySelector(".add-task form #check");
 
-let currentTask = [
-  {
-    task: "Mandir Jao",
-    details: "Hanuman ji wale",
-    imp: true,
-  },
-  {
-    task: "Recording karo",
-    details: "Cohort ke liye",
-    imp: true,
-  },
-  {
-    task: "Lunch",
-    details: "Diet",
-    imp: false,
-  },
-];
+  let currentTask = [];
 
-function renderTask() {
-  var allTask = document.querySelector(".all-task");
+  if (localStorage.getItem("currentTask")) {
+    currentTask = JSON.parse(localStorage.getItem("currentTask"));
+  } else {
+    console.log(currentTask);
+  }
 
-  var sum = "";
+  function renderTask() {
+    localStorage.setItem("currentTask", JSON.stringify(currentTask));
 
-  currentTask.forEach(function (elem) {
-    sum += `<div class="task">
+    var allTask = document.querySelector(".all-task");
+
+    var sum = "";
+
+    currentTask.forEach(function (elem, idx) {
+      sum += `<div class="task">
               <h5>${elem.task} <span class=${elem.imp}>imp</span> </h5>
-              <button>Mark as completed</button>
+              <button id=${idx}>Mark as completed</button>
             </div>`;
+    });
     allTask.innerHTML = sum;
+
+    var markCompletedBtn = document.querySelectorAll(".task button");
+
+    markCompletedBtn.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        currentTask.splice(btn.id, 1);
+        renderTask();
+      });
+    });
+  }
+
+  renderTask();
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    currentTask.push({
+      task: taskInput.value,
+      details: taskDetailsInput.value,
+      imp: taskCheckbox.checked,
+    });
+    renderTask();
+
+    taskInput.value = "";
+    taskDetailsInput.value = "";
+    taskCheckbox.checked = false;
   });
 }
 
-renderTask();
+todoList();
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  currentTask.push({
-    task: taskInput.value,
-    details: taskDetailsInput.value,
-    imp: taskCheckbox.checked,
+function dailyPlanner() {
+  var hours = Array.from({ length: 18 }, function (elem, idx) {
+    return `${6 + idx}:00 - ${7 + idx}:00`;
   });
-  taskInput.value = "";
-  taskDetailsInput.value = "";
-  taskCheckbox.checked = false;
-  renderTask();
-});
+
+  var wholeDaySum = ``;
+
+  var dayPlanner = document.querySelector(".day-planner");
+
+  var dayPlanData = JSON.parse(localStorage.getItem("dayPlanData")) || {};
+
+  hours.forEach(function (elem, idx) {
+    var savedData = dayPlanData[idx] || "";
+    wholeDaySum += `<div class="day-planner-time">
+                <p>${elem}</p>
+                <input id=${idx} type="text" placeholder="..." value="${savedData}">
+            </div>`;
+  });
+
+  dayPlanner.innerHTML = wholeDaySum;
+
+  var dayPlannerInput = document.querySelectorAll(".day-planner input");
+
+  dayPlannerInput.forEach(function (elem) {
+    elem.addEventListener("input", function () {
+      dayPlanData[elem.id] = elem.value;
+      localStorage.setItem("dayPlanData", JSON.stringify(dayPlanData));
+    });
+  });
+}
+
+dailyPlanner();
+
+function motivationalQuotes() {
+  var motivationQuoteContent = document.querySelector(".motivation-2 h1");
+  var motivationAuthor = document.querySelector(".motivation-3 h2");
+
+  async function getQuote() {
+    let response = await fetch("https://dummyjson.com/quotes/random");
+    let data = await response.json();
+
+    motivationQuoteContent.innerHTML = data.quote;
+    motivationAuthor.innerHTML = `- ${data.author}`;
+  }
+
+  getQuote();
+}
+
+motivationalQuotes();
