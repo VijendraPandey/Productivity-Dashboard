@@ -126,6 +126,7 @@ function motivationalQuotes() {
 
 motivationalQuotes();
 
+function pomoTimer(){
 var timer = document.querySelector(".pomo-timer h1");
 var startBtn = document.querySelector(".pomo-timer .start-timer");
 var pauseBtn = document.querySelector(".pomo-timer .pause-timer");
@@ -203,3 +204,82 @@ function resetTimer(){
 startBtn.addEventListener('click', startTimer);
 pauseBtn.addEventListener('click', pauseTimer);
 resetBtn.addEventListener('click', resetTimer);
+}
+
+pomoTimer();
+
+function weatherFunctionality() {
+  let apiKey = "5974db989d42467188064023251108";
+  let city = "hyderabad";
+
+  var header1H1 = document.querySelector(".header1 h1");
+  var header1H2 = document.querySelector(".header1 h2");
+  var header1H4 = document.querySelector(".header1 h4");
+  var header2 = document.querySelector(".header2");
+
+  var date = new Date();
+
+  async function fetchWeatherAPI() {
+    var response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`);
+    var data = await response.json();
+
+    header1H4.innerHTML = `<h4>${data.location.name}, (${data.location.region})</h4>`;
+    header2.innerHTML = `
+      <h2>${data.current.temp_c}°C</h2>
+      <h4>${data.current.condition.text}</h4>
+      <h3>Heat Index: ${data.current.heatindex_c}°C</h3>
+      <h3>Humidity: ${data.current.humidity}%</h3>
+      <h3>Wind: ${data.current.wind_kph} km/hr</h3>
+    `;
+  }
+
+  fetchWeatherAPI();
+
+  function getDateTime() {
+    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var date = new Date(); // Update date inside the function to get current time
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var day = date.getDate();
+    var month = months[date.getMonth()];
+    var year = date.getFullYear();
+    var ampm = hours >= 12 ? "PM" : "AM";
+    var displayHours = hours % 12 || 12;
+
+    header1H2.innerHTML = `<h2>${day} ${month}, ${year}</h2>`;
+    header1H1.innerHTML = `<h1>${days[date.getDay()]}, ${String(displayHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}</h1>`;
+  }
+
+  setInterval(() => {
+    getDateTime();
+  }, 1000);
+}
+
+weatherFunctionality();
+
+function changeTheme(){
+var theme = document.querySelector(".theme");
+var rootElement = document.documentElement;
+
+var flag=0;
+theme.addEventListener('click',()=>{
+  if(flag ==0){
+    rootElement.style.setProperty('--pri','#dfd0b8');
+  rootElement.style.setProperty('--sec','#222831');
+  rootElement.style.setProperty('--tri1','#948979');
+  rootElement.style.setProperty('--tri2','#393e46');
+  flag=1;
+  }
+  else{
+    rootElement.style.setProperty('--pri','#f8f4e1');
+  rootElement.style.setProperty('--sec','#381c0a');
+  rootElement.style.setProperty('--tri1','#feba17');
+  rootElement.style.setProperty('--tri2','#74512d');
+  flag=0;
+  }
+})
+}
+
+changeTheme();
